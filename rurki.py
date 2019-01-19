@@ -13,9 +13,9 @@ function_c = lambda x: 1
 function_f = lambda x: 0
 
 # ODE parameters
-begin_val = 0
-end_val = 1
-range_count = int(10)
+begin_val = -3*np.pi
+end_val = 4*np.pi
+range_count = int(35)
 
 u1 = np.cos(end_val)
 beta = 0
@@ -24,10 +24,12 @@ gamma = 0
 # helper variables
 u_vector = np.zeros(range_count + 1)
 functions = []
+breaks = np.linspace(begin_val, end_val, range_count)
+limit = 250
 
 
 def get_shape_function(begin: int, end: int, range_count: int, number: int):
-    return lambda x: max(0, 1 - abs(range_count / (end - begin) * (x - number * (end - begin) / range_count)))
+    return lambda x: max(0, 1 - abs(range_count / (end - begin) * (-begin + x - number * (end - begin) / range_count)))
 
 
 form_a = lambda x, u, v: function_a(x) * derivative(u, x, dx=1e-6) * derivative(v, x, dx=1e-6)
@@ -39,14 +41,14 @@ form_c = lambda x, u, v: function_c(x) * u(x) * v(x)
 
 def b_form_value(u, v):
     return -beta * u(begin_val) * v(begin_val) \
-           - quad(form_a, begin_val, end_val, (u, v))[0] \
-           + quad(form_b, begin_val, end_val, (u, v))[0] \
-           + quad(form_c, begin_val, end_val, (u, v))[0]
+           - quad(form_a, begin_val, end_val, (u, v), points=breaks, limit=limit)[0] \
+           + quad(form_b, begin_val, end_val, (u, v), points=breaks, limit=limit)[0] \
+           + quad(form_c, begin_val, end_val, (u, v), points=breaks, limit=limit)[0]
 
 
 def l_form_value(v):
     form_f = lambda x, v: function_f(x) * v(x)
-    return quad(form_f, begin_val, end_val, v)[0] - gamma * v(begin_val)
+    return quad(form_f, begin_val, end_val, v, points=breaks, limit=limit)[0] - gamma * v(begin_val)
 
 
 def result(x):
