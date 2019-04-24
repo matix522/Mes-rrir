@@ -13,8 +13,8 @@ function_c = lambda x: 1
 function_f = lambda x: 0
 
 # ODE parameters
-begin_val = -3*np.pi
-end_val = 4*np.pi
+begin_val = -3 * np.pi
+end_val = 4 * np.pi
 range_count = int(35)
 
 u1 = np.cos(end_val)
@@ -40,10 +40,12 @@ form_c = lambda x, u, v: function_c(x) * u(x) * v(x)
 
 
 def b_form_value(u, v):
-    return -beta * u(begin_val) * v(begin_val) \
-           - quad(form_a, begin_val, end_val, (u, v), points=breaks, limit=limit)[0] \
-           + quad(form_b, begin_val, end_val, (u, v), points=breaks, limit=limit)[0] \
-           + quad(form_c, begin_val, end_val, (u, v), points=breaks, limit=limit)[0]
+    return (
+        -beta * u(begin_val) * v(begin_val)
+        - quad(form_a, begin_val, end_val, (u, v), points=breaks, limit=limit)[0]
+        + quad(form_b, begin_val, end_val, (u, v), points=breaks, limit=limit)[0]
+        + quad(form_c, begin_val, end_val, (u, v), points=breaks, limit=limit)[0]
+    )
 
 
 def l_form_value(v):
